@@ -16,20 +16,16 @@ https://github.com/ringerc/Arduino-DHT22
 
 http://playground.arduino.cc/Main/DHTLib (?)
 
-Интересный подход для DHT11: питание посадили на цифровой пин и включают только каждые 120 секунд:
-http://forum.arduino.cc/index.php?topic=184356.msg1753894#msg1753894
+## Output
+Temperature output samples: " 0.1°", "-0.1°", " 1.2°", "-1.2°", "12.3°", "-12°", "123°". For temperatures less than 99° and greater than 999° the output will be "Err°".
 
-## Ideas
-### Output format
-Temperature output samples: " 24*" for positive values or "-03*" for negative.
+Humidity output samples: " 9.9H", "47.8H", "99.9H", "100H".
 
-Humidity output samples: "   9H", " 78H", "100H".
-
-Error codes: "Err1", "Err5".
+Error codes: "Err5", "Err°".
 
 ## Error codes
-* Err1: BUS Hung
-* Err2: Not Present
+* Err1: BUS hung
+* Err2: Sensor is not present
 * Err3: ACK time out
 * Err4: Sync Timeout
 * Err5: Data Timeout
