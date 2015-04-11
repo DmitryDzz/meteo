@@ -1,5 +1,5 @@
 const int DIGIT_DELAY_IN_MICROSECONDS = 500;
-const int MODE_DURATION_IN_MILLIS = 5000; // temperature / humidity modes
+const int MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
 
 const int DIGIT_1_PIN = 3;
 const int DIGIT_2_PIN = 5;
@@ -30,8 +30,8 @@ const int INACTIVE = -1;
 short digits[4];
 boolean decimalPoints[4];
 
-int temperature = -23; // real temperature * 10
-int humidity = 463;    // real humidity * 10
+int temperature; // real temperature * 10
+int humidity;    // real humidity * 10
 long startModeMillis;
 
 enum Mode {
@@ -232,7 +232,7 @@ void drawDigit(short value, boolean hasDecimalPoint) {
 }
 
 int readData() {
-  temperature = -23;
+  temperature = 234; // 1=0.1, -1=-0.1, 12=1.2, -12=-1.2, 123=12.3, -123=-12, 1234=123, -1234=err, 12345=err, -12345=err
   humidity = 463;
   
   return 0;
@@ -246,13 +246,58 @@ void setErrorCode(int errorCode) {
 }  
 
 void setTemperature() {
-  digits[0] = MINUS_SYMBOL;
-  digits[1] = 2;
-  digits[2] = 3;
-  digits[3] = DEGREE_SYMBOL;
+  const boolean isNegative = temperature < 0 ? true : false;
+  const int absTemperature = isNegative ? -temperature : temperature;
+
+  String textTemperature = String(absTemperature);
+  int textLength = textTemperature.length();
+  if (textLength == 0) {
+    textTemperature = "00";
+    textLength = 2;
+  }
+  else if (textLength == 1) {
+    textTemperature = "0" + textTemperature;
+    textLength = 2;
+  }
+
+Serial.println(textTemperature);
+
+  boolean hasDecimalPoint = true;
+  if ((isNegative && (textLength > 2)) || (!isNegative && (textLength > 3))) {
+    textTemperature.remove(textLength);
+    hasDecimalPoint = false;
+    textLength--;
+  }
+  
+  if (isNegative) {
+    if (textLength == 2) {
+      digits[0] = MINUS_SYMBOL;
+      digits[1] = String(textTemperature.charAt(textLength - 2)).toInt();
+      digits[2] = String(textTemperature.charAt(textLength - 1)).toInt();
+      digits[3] = DEGREE_SYMBOL;
+    } else {
+      digits[0] = E_SYMBOL;
+      digits[1] = R_SYMBOL;
+      digits[2] = R_SYMBOL;
+      digits[3] = DEGREE_SYMBOL; //todo add code for temperature overflow error
+    }
+  } else { // positive
+    if (textLength > 3) {
+      digits[0] = E_SYMBOL;
+      digits[1] = R_SYMBOL;
+      digits[2] = R_SYMBOL;
+      digits[3] = DEGREE_SYMBOL; //todo add code for temperature overflow error
+    } else {
+      if (textLength == 2) digits[0] = NOTHING_SYMBOL;
+      else digits[0] = String(textTemperature.charAt(textLength - 3)).toInt();
+      digits[1] = String(textTemperature.charAt(textLength - 2)).toInt();
+      digits[2] = String(textTemperature.charAt(textLength - 1)).toInt();
+      digits[3] = DEGREE_SYMBOL;
+    }
+  }
   
   decimalPoints[0] = false;
-  decimalPoints[1] = true;
+  decimalPoints[1] = hasDecimalPoint;
   decimalPoints[2] = false;
   decimalPoints[3] = false;
 }
@@ -299,6 +344,8 @@ void setup() {
   
   startModeMillis = millis();
   mode = TEMPERATURE;
+  
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -320,6 +367,8 @@ void loop() {
     if (mode == TEMPERATURE) setTemperature();
     else setHumidity();
   }
+  
+//  delay(1000);
   
   // Draw one current digit on display
   activateDigit(INACTIVE);
