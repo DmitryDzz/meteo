@@ -1,4 +1,5 @@
-const int DIGIT_DELAY = 500;
+const int DIGIT_DELAY_IN_MICROSECONDS = 500;
+const int MODE_DURATION_IN_MILLIS = 5000; // temperature / humidity modes
 
 const int DIGIT_1_PIN = 3;
 const int DIGIT_2_PIN = 5;
@@ -12,19 +13,31 @@ const int SEGMENT_D_PIN = 11;
 const int SEGMENT_E_PIN = 12;
 const int SEGMENT_F_PIN = 7;
 const int SEGMENT_G_PIN = 13;
+const int SEGMENT_DP_PIN = 4;
 
 const byte DIGIT_OFF = 255;
-const byte DIGIT_ON = 100; // increase the value to reduce current
+const byte DIGIT_ON = 0; // increase the value to reduce current
 
-const short MINUS = -1;
-const short DEGREE = -2;
+const short MINUS_SYMBOL = -1;
+const short DEGREE_SYMBOL = -2;
+const short HUMIDITY_SYMBOL = -3;
+const short NOTHING_SYMBOL = -4;
+const short E_SYMBOL = -5;
+const short R_SYMBOL = -6;
 
 int currentDigitIndex = 0;
 const int INACTIVE = -1;
 short digits[4];
+boolean decimalPoints[4];
 
-int temperature = -23;
-int humidity = 46;
+int temperature = -23; // real temperature * 10
+int humidity = 463;    // real humidity * 10
+long startModeMillis;
+
+enum Mode {
+  TEMPERATURE, HUMIDITY
+};
+Mode mode;
 
 void activateDigit(int digit) {
   switch (digit) {
@@ -60,9 +73,45 @@ void activateDigit(int digit) {
   }    
 }
 
-void drawDigit(short value) {
+void drawDigit(short value, boolean hasDecimalPoint) {
   switch (value) {
-    case DEGREE:
+    case R_SYMBOL:
+      digitalWrite(SEGMENT_A_PIN, LOW);
+      digitalWrite(SEGMENT_B_PIN, LOW);
+      digitalWrite(SEGMENT_C_PIN, LOW);
+      digitalWrite(SEGMENT_D_PIN, LOW);
+      digitalWrite(SEGMENT_E_PIN, HIGH);
+      digitalWrite(SEGMENT_F_PIN, LOW);
+      digitalWrite(SEGMENT_G_PIN, HIGH);
+      break;
+    case E_SYMBOL:
+      digitalWrite(SEGMENT_A_PIN, HIGH);
+      digitalWrite(SEGMENT_B_PIN, LOW);
+      digitalWrite(SEGMENT_C_PIN, LOW);
+      digitalWrite(SEGMENT_D_PIN, HIGH);
+      digitalWrite(SEGMENT_E_PIN, HIGH);
+      digitalWrite(SEGMENT_F_PIN, HIGH);
+      digitalWrite(SEGMENT_G_PIN, HIGH);
+      break;
+    case NOTHING_SYMBOL:
+      digitalWrite(SEGMENT_A_PIN, LOW);
+      digitalWrite(SEGMENT_B_PIN, LOW);
+      digitalWrite(SEGMENT_C_PIN, LOW);
+      digitalWrite(SEGMENT_D_PIN, LOW);
+      digitalWrite(SEGMENT_E_PIN, LOW);
+      digitalWrite(SEGMENT_F_PIN, LOW);
+      digitalWrite(SEGMENT_G_PIN, LOW);
+      break;
+    case HUMIDITY_SYMBOL:
+      digitalWrite(SEGMENT_A_PIN, LOW);
+      digitalWrite(SEGMENT_B_PIN, HIGH);
+      digitalWrite(SEGMENT_C_PIN, HIGH);
+      digitalWrite(SEGMENT_D_PIN, LOW);
+      digitalWrite(SEGMENT_E_PIN, HIGH);
+      digitalWrite(SEGMENT_F_PIN, HIGH);
+      digitalWrite(SEGMENT_G_PIN, HIGH);
+      break;
+    case DEGREE_SYMBOL:
       digitalWrite(SEGMENT_A_PIN, HIGH);
       digitalWrite(SEGMENT_B_PIN, HIGH);
       digitalWrite(SEGMENT_C_PIN, LOW);
@@ -71,7 +120,7 @@ void drawDigit(short value) {
       digitalWrite(SEGMENT_F_PIN, HIGH);
       digitalWrite(SEGMENT_G_PIN, HIGH);
       break;
-    case MINUS:
+    case MINUS_SYMBOL:
       digitalWrite(SEGMENT_A_PIN, LOW);
       digitalWrite(SEGMENT_B_PIN, LOW);
       digitalWrite(SEGMENT_C_PIN, LOW);
@@ -179,6 +228,45 @@ void drawDigit(short value) {
       digitalWrite(SEGMENT_F_PIN, LOW);
       digitalWrite(SEGMENT_G_PIN, LOW);
   }
+  digitalWrite(SEGMENT_DP_PIN, hasDecimalPoint ? HIGH : LOW);
+}
+
+int readData() {
+  temperature = -23;
+  humidity = 463;
+  
+  return 0;
+}
+
+void setErrorCode(int errorCode) {
+  digits[0] = E_SYMBOL;
+  digits[1] = R_SYMBOL;
+  digits[2] = R_SYMBOL;
+  digits[3] = 5;
+}  
+
+void setTemperature() {
+  digits[0] = MINUS_SYMBOL;
+  digits[1] = 2;
+  digits[2] = 3;
+  digits[3] = DEGREE_SYMBOL;
+  
+  decimalPoints[0] = false;
+  decimalPoints[1] = true;
+  decimalPoints[2] = false;
+  decimalPoints[3] = false;
+}
+
+void setHumidity() {
+  digits[0] = 4;
+  digits[1] = 6;
+  digits[2] = 3;
+  digits[3] = HUMIDITY_SYMBOL;
+  
+  decimalPoints[0] = false;
+  decimalPoints[1] = true;
+  decimalPoints[2] = false;
+  decimalPoints[3] = false;
 }
 
 void setup() {
@@ -194,6 +282,7 @@ void setup() {
   pinMode(SEGMENT_E_PIN, OUTPUT);
   pinMode(SEGMENT_F_PIN, OUTPUT);
   pinMode(SEGMENT_G_PIN, OUTPUT);
+  pinMode(SEGMENT_DP_PIN, OUTPUT);
   
   analogWrite(DIGIT_1_PIN, DIGIT_OFF);
   analogWrite(DIGIT_2_PIN, DIGIT_OFF);
@@ -206,20 +295,40 @@ void setup() {
   digitalWrite(SEGMENT_E_PIN, HIGH);
   digitalWrite(SEGMENT_F_PIN, HIGH);
   digitalWrite(SEGMENT_G_PIN, HIGH);
+  digitalWrite(SEGMENT_DP_PIN, HIGH);
   
-  digits[0] = MINUS;
-  digits[1] = 2;
-  digits[2] = 3;
-  digits[3] = DEGREE;
+  startModeMillis = millis();
+  mode = TEMPERATURE;
 }
 
 void loop() {
+  // Read data from sensor
+  int errorCode = readData();
+  if (errorCode < 0) {
+    // Fill digits array
+    setErrorCode(errorCode);
+  } else {
+    // Check mode duration and change the mode if it's time to
+    const long now = millis();
+    if (now - startModeMillis > MODE_DURATION_IN_MILLIS) {
+      startModeMillis = now;
+      if (mode == TEMPERATURE) mode = HUMIDITY;
+      else mode = TEMPERATURE;
+    }
+    
+    // Fill digits array
+    if (mode == TEMPERATURE) setTemperature();
+    else setHumidity();
+  }
+  
+  // Draw one current digit on display
   activateDigit(INACTIVE);
-  drawDigit(digits[currentDigitIndex]);
+  drawDigit(digits[currentDigitIndex], decimalPoints[currentDigitIndex]);
   activateDigit(currentDigitIndex);
   
+  // Change current digit
   currentDigitIndex++;
   if (currentDigitIndex >= 4) currentDigitIndex = 0;
   
-  delayMicroseconds(DIGIT_DELAY);
+  delayMicroseconds(DIGIT_DELAY_IN_MICROSECONDS);
 }
