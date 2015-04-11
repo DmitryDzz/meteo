@@ -1,5 +1,10 @@
-const int DIGIT_DELAY_IN_MICROSECONDS = 500;
-const int MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
+#include <DHT22.h>
+
+const long DIGIT_DELAY_IN_MICROSECONDS = 500;
+const long MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
+const long READ_DELAY_IN_MILLIS = 5000;
+
+const int DHT22_PIN = A0;
 
 const int DIGIT_1_PIN = 3;
 const int DIGIT_2_PIN = 5;
@@ -30,14 +35,17 @@ const int INACTIVE = -1;
 short digits[4];
 boolean decimalPoints[4];
 
-int temperature; // real temperature * 10
-int humidity;    // real humidity * 10
+int temperature = 0; // real temperature * 10
+int humidity = 0;    // real humidity * 10
 long startModeMillis;
+long lastReadingMillis;
 
 enum Mode {
   TEMPERATURE, HUMIDITY
 };
 Mode mode;
+
+DHT22 sensorDHT22(DHT22_PIN);
 
 void activateDigit(int digit) {
   switch (digit) {
@@ -232,8 +240,22 @@ void drawDigit(short value, boolean hasDecimalPoint) {
 }
 
 int readData() {
-  temperature = 234; // 1=0.1, -1=-0.1, 12=1.2, -12=-1.2, 123=12.3, -123=-12, 1234=123, -1234=err, 12345=err, -12345=err
-  humidity = 461; // -1=0.0, 0=0.0, 1=0.1, 12=1.2, 123=12.3, 1000=100, 1234=100
+  const long now = millis();
+  if (now - lastReadingMillis > READ_DELAY_IN_MILLIS) {
+    lastReadingMillis = now;
+    DHT22_ERROR_t errorCode = sensorDHT22.readData();
+    temperature = sensorDHT22.getTemperatureCInt();
+    humidity = sensorDHT22.getHumidityInt();
+    return -errorCode;
+  }
+
+// Temperature values' samples and result output:
+//   1=0.1, -1=-0.1, 12=1.2, -12=-1.2, 123=12.3, -123=-12, 1234=123, -1234=err, 12345=err, -12345=err
+// Himidity values' samples and result output:
+//   -1=0.0, 0=0.0, 1=0.1, 12=1.2, 123=12.3, 1000=100, 1234=100
+
+//  temperature = 0;
+//  humidity = 0;
   
   return 0;
 }
@@ -242,7 +264,7 @@ void setErrorCode(int errorCode) {
   digits[0] = E_SYMBOL;
   digits[1] = R_SYMBOL;
   digits[2] = R_SYMBOL;
-  digits[3] = 5;
+  digits[3] = -errorCode % 10;
 }  
 
 void setTemperature() {
@@ -277,14 +299,14 @@ void setTemperature() {
       digits[0] = E_SYMBOL;
       digits[1] = R_SYMBOL;
       digits[2] = R_SYMBOL;
-      digits[3] = DEGREE_SYMBOL; //todo add code for temperature overflow error
+      digits[3] = DEGREE_SYMBOL;
     }
   } else { // positive
     if (textLength > 3) {
       digits[0] = E_SYMBOL;
       digits[1] = R_SYMBOL;
       digits[2] = R_SYMBOL;
-      digits[3] = DEGREE_SYMBOL; //todo add code for temperature overflow error
+      digits[3] = DEGREE_SYMBOL;
     } else {
       if (textLength == 2) digits[0] = NOTHING_SYMBOL;
       else digits[0] = String(textTemperature.charAt(textLength - 3)).toInt();
@@ -366,6 +388,7 @@ void setup() {
   digitalWrite(SEGMENT_DP_PIN, HIGH);
   
   startModeMillis = millis();
+  lastReadingMillis = startModeMillis;
   mode = TEMPERATURE;
 }
 
