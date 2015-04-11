@@ -233,7 +233,7 @@ void drawDigit(short value, boolean hasDecimalPoint) {
 
 int readData() {
   temperature = 234; // 1=0.1, -1=-0.1, 12=1.2, -12=-1.2, 123=12.3, -123=-12, 1234=123, -1234=err, 12345=err, -12345=err
-  humidity = 463;
+  humidity = 461; // -1=0.0, 0=0.0, 1=0.1, 12=1.2, 123=12.3, 1000=100, 1234=100
   
   return 0;
 }
@@ -259,8 +259,6 @@ void setTemperature() {
     textTemperature = "0" + textTemperature;
     textLength = 2;
   }
-
-Serial.println(textTemperature);
 
   boolean hasDecimalPoint = true;
   if ((isNegative && (textLength > 2)) || (!isNegative && (textLength > 3))) {
@@ -303,13 +301,38 @@ Serial.println(textTemperature);
 }
 
 void setHumidity() {
-  digits[0] = 4;
-  digits[1] = 6;
-  digits[2] = 3;
-  digits[3] = HUMIDITY_SYMBOL;
+  if (humidity < 0) humidity = 0;
+  else if (humidity > 1000) humidity = 1000;
+
+  String textHumidity = String(humidity);
+  int textLength = textHumidity.length();
+  if (textLength == 0) {
+    textHumidity = "00";
+    textLength = 2;
+  }
+  else if (textLength == 1) {
+    textHumidity = "0" + textHumidity;
+    textLength = 2;
+  }
+
+  boolean hasDecimalPoint;
+  if (humidity == 1000) {
+    digits[0] = 1;
+    digits[1] = 0;
+    digits[2] = 0;
+    digits[3] = HUMIDITY_SYMBOL;
+    hasDecimalPoint = false;
+  } else {
+    if (textLength == 2) digits[0] = NOTHING_SYMBOL;
+    else digits[0] = String(textHumidity.charAt(textLength - 3)).toInt();
+    digits[1] = String(textHumidity.charAt(textLength - 2)).toInt();
+    digits[2] = String(textHumidity.charAt(textLength - 1)).toInt();
+    digits[3] = HUMIDITY_SYMBOL;
+    hasDecimalPoint = true;
+  }
   
   decimalPoints[0] = false;
-  decimalPoints[1] = true;
+  decimalPoints[1] = hasDecimalPoint;
   decimalPoints[2] = false;
   decimalPoints[3] = false;
 }
@@ -344,8 +367,6 @@ void setup() {
   
   startModeMillis = millis();
   mode = TEMPERATURE;
-  
-  Serial.begin(9600);
 }
 
 void loop() {
@@ -367,8 +388,6 @@ void loop() {
     if (mode == TEMPERATURE) setTemperature();
     else setHumidity();
   }
-  
-//  delay(1000);
   
   // Draw one current digit on display
   activateDigit(INACTIVE);
