@@ -32,3 +32,18 @@ Error codes: "Err5", "Err°".
 * Err6: Checksum error
 * Err7: Polled to quick
 * Err°: Too long temperature string
+
+## Pins
+* DHT22 sensor: A0
+* Digit 1 pin (PWM): 3
+* Digit 2 pin (PWM): 5
+* Digit 3 pin (PWM): 6
+* Digit 4 pin (PWM): 9
+* Segment A pin: 2
+* Segment B pin: 8
+* Segment C pin: 10
+* Segment D pin: 11
+* Segment E pin: 12
+* Segment F pin: 7
+* Segment G pin: 13
+* Segment DecimalPoint pin: 4
