@@ -1,3 +1,5 @@
+const int DIGIT_DELAY = 500;
+
 const int DIGIT_1_PIN = 3;
 const int DIGIT_2_PIN = 5;
 const int DIGIT_3_PIN = 6;
@@ -12,13 +14,17 @@ const int SEGMENT_F_PIN = 7;
 const int SEGMENT_G_PIN = 13;
 
 const byte DIGIT_OFF = 255;
-const byte DIGIT_ON = 10; // increase the value to reduce current
+const byte DIGIT_ON = 100; // increase the value to reduce current
 
 const short MINUS = -1;
 const short DEGREE = -2;
 
 int currentDigitIndex = 0;
+const int INACTIVE = -1;
 short digits[4];
+
+int temperature = -23;
+int humidity = 46;
 
 void activateDigit(int digit) {
   switch (digit) {
@@ -208,11 +214,12 @@ void setup() {
 }
 
 void loop() {
-  activateDigit(currentDigitIndex);
+  activateDigit(INACTIVE);
   drawDigit(digits[currentDigitIndex]);
+  activateDigit(currentDigitIndex);
   
   currentDigitIndex++;
   if (currentDigitIndex >= 4) currentDigitIndex = 0;
   
-  delayMicroseconds(500);
+  delayMicroseconds(DIGIT_DELAY);
 }
