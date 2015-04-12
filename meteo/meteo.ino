@@ -1,7 +1,7 @@
 #include <dht.h>
 
 const long MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
-const long READ_DELAY_IN_MILLIS = 5000;
+const long READ_DELAY_IN_MILLIS = 4000;
 
 // LED display constants:
 const boolean COMMON_ANODE_LED = false; // true for LED with common anode, false for LED with common cathode.
@@ -41,6 +41,7 @@ const int INACTIVE = -1;
 short digits[4];
 boolean decimalPoints[4];
 
+int errorCode = 0;
 int temperature = 0; // real temperature * 10
 int humidity = 0;    // real humidity * 10
 long startModeMillis;
@@ -249,10 +250,9 @@ int readData() {
   const long now = millis();
   if (now - lastReadingMillis > READ_DELAY_IN_MILLIS) {
     lastReadingMillis = now;
-    int errorCode = sensorDht.read22(DHT22_PIN);
+    errorCode = sensorDht.read22(DHT22_PIN);
     temperature = sensorDht.temperatureInt10;
     humidity = sensorDht.humidityInt10;
-    return errorCode;
   }
 
 // Temperature values' samples and result output:
@@ -263,7 +263,7 @@ int readData() {
 //  temperature = 0;
 //  humidity = 0;
   
-  return 0;
+    return errorCode;
 }
 
 void setErrorCode(int errorCode) {
@@ -271,6 +271,11 @@ void setErrorCode(int errorCode) {
   digits[1] = R_SYMBOL;
   digits[2] = R_SYMBOL;
   digits[3] = -errorCode % 10;
+
+  decimalPoints[0] = false;
+  decimalPoints[1] = false;
+  decimalPoints[2] = false;
+  decimalPoints[3] = false;
 }  
 
 void setTemperature() {
@@ -380,19 +385,6 @@ void setup() {
   pinMode(SEGMENT_G_PIN, OUTPUT);
   pinMode(SEGMENT_DP_PIN, OUTPUT);
   
-  analogWrite(DIGIT_1_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_2_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_3_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_4_PIN, DIGIT_OFF);
-  digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
-  
   if (COMMON_ANODE_LED) {
     // LED display with common anode:
     DIGIT_OFF = 0;
@@ -407,6 +399,19 @@ void setup() {
     SEGMENT_ON = HIGH;
   }
   
+  analogWrite(DIGIT_1_PIN, DIGIT_OFF);
+  analogWrite(DIGIT_2_PIN, DIGIT_OFF);
+  analogWrite(DIGIT_3_PIN, DIGIT_OFF);
+  analogWrite(DIGIT_4_PIN, DIGIT_OFF);
+  digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
+  
   startModeMillis = millis();
   lastReadingMillis = startModeMillis;
   mode = TEMPERATURE;
@@ -414,7 +419,7 @@ void setup() {
 
 void loop() {
   // Read data from sensor
-  int errorCode = readData();
+  errorCode = readData();
   if (errorCode < 0) {
     // Fill digits array
     setErrorCode(errorCode);
