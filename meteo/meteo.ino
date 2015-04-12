@@ -1,8 +1,12 @@
-#include <DHT22.h>
+#include <dht.h>
 
-const long DIGIT_DELAY_IN_MICROSECONDS = 500;
 const long MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
 const long READ_DELAY_IN_MILLIS = 5000;
+
+// LED display constants:
+const boolean COMMON_ANODE_LED = false; // true for LED with common anode, false for LED with common cathode.
+const byte BRIGHTNESS = 255; // 0 - min, 255 - max
+const long DIGIT_DELAY_IN_MICROSECONDS = 500;
 
 const int DHT22_PIN = A0;
 
@@ -20,16 +24,10 @@ const int SEGMENT_F_PIN = 7;
 const int SEGMENT_G_PIN = 13;
 const int SEGMENT_DP_PIN = 4;
 
-// LED display with common cathode:
-const byte DIGIT_OFF = 255;
-const byte DIGIT_ON = 0; // increase the value to reduce current
-const byte SEGMENT_OFF = LOW;
-const byte SEGMENT_ON = HIGH;
-// LED display with common anode:
-//const byte DIGIT_OFF = 0;
-//const byte DIGIT_ON = 255; // decrease the value to reduce current
-//const byte SEGMENT_OFF = HIGH;
-//const byte SEGMENT_ON = LOW;
+byte DIGIT_OFF;
+byte DIGIT_ON;
+byte SEGMENT_OFF;
+byte SEGMENT_ON;
 
 const short MINUS_SYMBOL = -1;
 const short DEGREE_SYMBOL = -2;
@@ -53,7 +51,7 @@ enum Mode {
 };
 Mode mode;
 
-DHT22 sensorDHT22(DHT22_PIN);
+dht sensorDht;
 
 void activateDigit(int digit) {
   switch (digit) {
@@ -251,10 +249,10 @@ int readData() {
   const long now = millis();
   if (now - lastReadingMillis > READ_DELAY_IN_MILLIS) {
     lastReadingMillis = now;
-    DHT22_ERROR_t errorCode = sensorDHT22.readData();
-    temperature = sensorDHT22.getTemperatureCInt();
-    humidity = sensorDHT22.getHumidityInt();
-    return -errorCode;
+    int errorCode = sensorDht.read22(DHT22_PIN);
+    temperature = sensorDht.temperatureInt10;
+    humidity = sensorDht.humidityInt10;
+    return errorCode;
   }
 
 // Temperature values' samples and result output:
@@ -394,6 +392,20 @@ void setup() {
   digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
   digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
   digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
+  
+  if (COMMON_ANODE_LED) {
+    // LED display with common anode:
+    DIGIT_OFF = 0;
+    DIGIT_ON = BRIGHTNESS;
+    SEGMENT_OFF = HIGH;
+    SEGMENT_ON = LOW;
+  } else {
+    // LED display with common cathode:
+    DIGIT_OFF = 255;
+    DIGIT_ON = 255 - BRIGHTNESS;
+    SEGMENT_OFF = LOW;
+    SEGMENT_ON = HIGH;
+  }
   
   startModeMillis = millis();
   lastReadingMillis = startModeMillis;
