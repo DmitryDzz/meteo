@@ -20,8 +20,16 @@ const int SEGMENT_F_PIN = 7;
 const int SEGMENT_G_PIN = 13;
 const int SEGMENT_DP_PIN = 4;
 
+// LED display with common cathode:
 const byte DIGIT_OFF = 255;
 const byte DIGIT_ON = 0; // increase the value to reduce current
+const byte SEGMENT_OFF = LOW;
+const byte SEGMENT_ON = HIGH;
+// LED display with common anode:
+//const byte DIGIT_OFF = 0;
+//const byte DIGIT_ON = 255; // decrease the value to reduce current
+//const byte SEGMENT_OFF = HIGH;
+//const byte SEGMENT_ON = LOW;
 
 const short MINUS_SYMBOL = -1;
 const short DEGREE_SYMBOL = -2;
@@ -84,159 +92,159 @@ void activateDigit(int digit) {
 void drawDigit(short value, boolean hasDecimalPoint) {
   switch (value) {
     case R_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case E_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case NOTHING_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, LOW);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_OFF);
       break;
     case HUMIDITY_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case DEGREE_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case MINUS_SYMBOL:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 0:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, LOW);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_OFF);
       break;
     case 1:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, LOW);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_OFF);
       break;
     case 2:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 3:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 4:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 5:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 6:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 7:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, LOW);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_OFF);
       break;
     case 8:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, HIGH);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     case 9:
-      digitalWrite(SEGMENT_A_PIN, HIGH);
-      digitalWrite(SEGMENT_B_PIN, HIGH);
-      digitalWrite(SEGMENT_C_PIN, HIGH);
-      digitalWrite(SEGMENT_D_PIN, HIGH);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, HIGH);
-      digitalWrite(SEGMENT_G_PIN, HIGH);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
       break;
     default:
-      digitalWrite(SEGMENT_A_PIN, LOW);
-      digitalWrite(SEGMENT_B_PIN, LOW);
-      digitalWrite(SEGMENT_C_PIN, LOW);
-      digitalWrite(SEGMENT_D_PIN, LOW);
-      digitalWrite(SEGMENT_E_PIN, LOW);
-      digitalWrite(SEGMENT_F_PIN, LOW);
-      digitalWrite(SEGMENT_G_PIN, LOW);
+      digitalWrite(SEGMENT_A_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_B_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_C_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_D_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_E_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_F_PIN, SEGMENT_OFF);
+      digitalWrite(SEGMENT_G_PIN, SEGMENT_OFF);
   }
-  digitalWrite(SEGMENT_DP_PIN, hasDecimalPoint ? HIGH : LOW);
+  digitalWrite(SEGMENT_DP_PIN, hasDecimalPoint ? SEGMENT_ON : SEGMENT_OFF);
 }
 
 int readData() {
@@ -378,14 +386,14 @@ void setup() {
   analogWrite(DIGIT_2_PIN, DIGIT_OFF);
   analogWrite(DIGIT_3_PIN, DIGIT_OFF);
   analogWrite(DIGIT_4_PIN, DIGIT_OFF);
-  digitalWrite(SEGMENT_A_PIN, HIGH);
-  digitalWrite(SEGMENT_B_PIN, HIGH);
-  digitalWrite(SEGMENT_C_PIN, HIGH);
-  digitalWrite(SEGMENT_D_PIN, HIGH);
-  digitalWrite(SEGMENT_E_PIN, HIGH);
-  digitalWrite(SEGMENT_F_PIN, HIGH);
-  digitalWrite(SEGMENT_G_PIN, HIGH);
-  digitalWrite(SEGMENT_DP_PIN, HIGH);
+  digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
+  digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
   
   startModeMillis = millis();
   lastReadingMillis = startModeMillis;
