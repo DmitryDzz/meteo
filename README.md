@@ -17,11 +17,11 @@ https://github.com/ringerc/Arduino-DHT22
 http://playground.arduino.cc/Main/DHTLib (?)
 
 ## Output
-Temperature output samples: " 0.1°", "-0.1°", " 1.2°", "-1.2°", "12.3°", "-12°", "123°". For temperatures less than 99° and greater than 999° the output will be "Err°".
+Temperature output samples: [ 0.1°], [-0.1°], [ 1.2°], [-1.2°], [12.3°], [-12°], [123°]. For temperatures less than -99° and greater than 999° the output will be [Err°].
 
-Humidity output samples: " 9.9H", "47.8H", "99.9H", "100H".
+Humidity output samples: [ 9.9H], [47.8H], [99.9H], [100H].
 
-Error codes: "Err5", "Err°".
+Error code samples: [Err5], [Err°].
 
 ## Error codes
 * Err1: BUS hung
@@ -47,3 +47,8 @@ Error codes: "Err5", "Err°".
 * Segment F pin: 7
 * Segment G pin: 13
 * Segment DecimalPoint pin: 4
+
+## Useful constants
+* DIGIT_DELAY_IN_MICROSECONDS
+* MODE_DURATION_IN_MILLIS
+* READ_DELAY_IN_MILLIS
