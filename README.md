@@ -10,11 +10,12 @@ Or four single digit numeric display like [this one](http://files.amperka.ru/dat
 ### Sensor
 Temperature and humidity sensor [DHT22](https://www.adafruit.com/datasheets/DHT22.pdf).
 
-## Libraries for DHT22 sensor
+## Library for DHT22 sensor
+https://github.com/DmitryDzz/ArduinoLibraries/tree/master/libraries/DHTlib
 
-https://github.com/ringerc/Arduino-DHT22
+This library is http://playground.arduino.cc/Main/DHTLib fork. HumidityInt10 and temperatureInt10 fields where added.
 
-http://playground.arduino.cc/Main/DHTLib (?)
+~~https://github.com/ringerc/Arduino-DHT22~~
 
 ## Output
 Temperature output samples: [ 0.1°], [-0.1°], [ 1.2°], [-1.2°], [12.3°], [-12°], [123°]. For temperatures less than -99° and greater than 999° the output will be [Err°].
@@ -24,13 +25,11 @@ Humidity output samples: [ 9.9H], [47.8H], [99.9H], [100H].
 Error code samples: [Err5], [Err°].
 
 ## Error codes
-* Err1: BUS hung
-* Err2: Sensor is not present
-* Err3: ACK time out
-* Err4: Sync Timeout
-* Err5: Data Timeout
-* Err6: Checksum error
-* Err7: Polled to quick
+* Err1: Checksum error
+* Err2: Time out error
+* Err3: Connect error
+* Err4: Ack Low error
+* Err5: Ack High error
 * Err°: Too long temperature string
 
 ## Pins
