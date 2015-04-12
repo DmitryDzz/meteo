@@ -48,6 +48,8 @@ Error code samples: [Err5], [Err°].
 * Segment DecimalPoint pin: 4
 
 ## Useful constants
-* DIGIT_DELAY_IN_MICROSECONDS
-* MODE_DURATION_IN_MILLIS
-* READ_DELAY_IN_MILLIS
+* MODE_DURATION_IN_MILLIS - temperature / humidity pause time
+* READ_DELAY_IN_MILLIS - sensor read interval
+* COMMON_ANODE_LED - set true for LED with common anode, false for LED with common cathode
+* BRIGHTNESS - 0 is min value, 255 - max
+* DIGIT_DELAY_IN_MICROSECONDS - delay to light up one digit
