@@ -17,7 +17,7 @@ https://github.com/ringerc/Arduino-DHT22
 http://playground.arduino.cc/Main/DHTLib (?)
 
 ## Output
-Temperature output samples: " 0.1°", "-0.1°", " 1.2°", "-1.2°", "12.3°", "-12°", "123°". For temperatures less than 99° and greater than 999° the output will be "Err°".
+Temperature output samples: " 0.1°", "-0.1°", " 1.2°", "-1.2°", "12.3°", "-12°", "123°". For temperatures less than -99° and greater than 999° the output will be "Err°".
 
 Humidity output samples: " 9.9H", "47.8H", "99.9H", "100H".
 
