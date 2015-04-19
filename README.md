@@ -1,6 +1,8 @@
 # meteo
 Home meteo
 
+![Breadboard version](https://cloud.githubusercontent.com/assets/1957839/7219205/5116e61a-e69d-11e4-8fc7-dcfcb2617f8d.jpg)
+
 ## Datasheets
 ### LED displays
 One 4-digit 7-segment LED display like [this](http://www.kingbrightusa.com/images/catalog/SPEC/CA56-12SRWA.pdf).
