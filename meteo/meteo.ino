@@ -1,5 +1,7 @@
 #include <dht.h>
+#include "mercury_switch.h"
 
+const boolean AUTO_START = false;
 const long MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
 const long READ_DELAY_IN_MILLIS = 4000;
 
@@ -9,6 +11,7 @@ const byte BRIGHTNESS = 255; // 0 - min, 255 - max
 const long DIGIT_DELAY_IN_MICROSECONDS = 500;
 
 const int DHT22_PIN = A0;
+const int MERCURY_SWITCH_PIN = A1;
 
 const int DIGIT_1_PIN = 3;
 const int DIGIT_2_PIN = 5;
@@ -53,6 +56,9 @@ enum Mode {
 Mode mode;
 
 dht sensorDht;
+
+MercurySwitch *mercurySwitch;
+boolean previousMercurySwitchIsOn;
 
 void activateDigit(int digit) {
   switch (digit) {
@@ -412,12 +418,27 @@ void setup() {
   digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
   digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
   
-  startModeMillis = millis();
-  lastReadingMillis = startModeMillis;
-  mode = TEMPERATURE;
+  if (AUTO_START) {
+    previousMercurySwitchIsOn = false;
+  } else {
+    mercurySwitch = new MercurySwitch(MERCURY_SWITCH_PIN, 1000, 10000);
+    delay(200);
+    previousMercurySwitchIsOn = mercurySwitch->isOn();
+  }
 }
 
 void loop() {
+  boolean mercurySwitchIsOn = AUTO_START ? true : mercurySwitch->isOn();
+  if (mercurySwitchIsOn ^ previousMercurySwitchIsOn) {
+    if (mercurySwitchIsOn) {
+      // Just turned on:
+      startModeMillis = millis();
+      lastReadingMillis = startModeMillis;
+      mode = TEMPERATURE;
+    }
+  }
+  previousMercurySwitchIsOn = mercurySwitchIsOn;
+  
   // Read data from sensor
   errorCode = readData();
   if (errorCode < 0) {
@@ -440,7 +461,9 @@ void loop() {
   // Draw one current digit on display
   activateDigit(INACTIVE);
   drawDigit(digits[currentDigitIndex], decimalPoints[currentDigitIndex]);
-  activateDigit(currentDigitIndex);
+  if (mercurySwitchIsOn) {
+    activateDigit(currentDigitIndex);
+  }
   
   // Change current digit
   currentDigitIndex++;
