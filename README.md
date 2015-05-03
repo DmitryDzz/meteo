@@ -36,6 +36,7 @@ Error code samples: [Err5], [Err°].
 
 ## Pins
 * DHT22 sensor: A0
+* Mercury switch*: A1
 * Digit 1 pin (PWM): 3
 * Digit 2 pin (PWM): 5
 * Digit 3 pin (PWM): 6
@@ -49,7 +50,11 @@ Error code samples: [Err5], [Err°].
 * Segment G pin: 13
 * Segment DecimalPoint pin: 4
 
+(*) Mercury switch is connected to the input pin (INPUT_PULLUP mode) and one of GND pins. In case the switch is connected the display is off by default. It is turned on after shaking the switch for a second. And it is off again after LED_TURNED_ON_DURATION milliseconds.
+
 ## Useful constants
+* AUTO_START - should be false if mercury switch is connected
+* LED_TURNED_ON_DURATION - time in milliseconds the LED display is turned on after shaking
 * MODE_DURATION_IN_MILLIS - temperature / humidity pause time
 * READ_DELAY_IN_MILLIS - sensor read interval
 * COMMON_ANODE_LED - set true for LED with common anode, false for LED with common cathode
