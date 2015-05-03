@@ -2,6 +2,7 @@
 #include "mercury_switch.h"
 
 const boolean AUTO_START = false;
+const long LED_TURNED_ON_DURATION = 10000;
 const long MODE_DURATION_IN_MILLIS = 2000; // temperature / humidity modes
 const long READ_DELAY_IN_MILLIS = 4000;
 
@@ -421,7 +422,7 @@ void setup() {
   if (AUTO_START) {
     previousMercurySwitchIsOn = false;
   } else {
-    mercurySwitch = new MercurySwitch(MERCURY_SWITCH_PIN, 1000, 10000);
+    mercurySwitch = new MercurySwitch(MERCURY_SWITCH_PIN, 1000, LED_TURNED_ON_DURATION);
     delay(200);
     previousMercurySwitchIsOn = mercurySwitch->isOn();
   }
