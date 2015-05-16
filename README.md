@@ -35,20 +35,20 @@ Error code samples: [Err5], [Err°].
 * Err°: Too long temperature string
 
 ## Pins
-* DHT22 sensor: A0
-* Mercury switch*: A1
-* Digit 1 pin (PWM): 3
-* Digit 2 pin (PWM): 5
-* Digit 3 pin (PWM): 6
-* Digit 4 pin (PWM): 9
-* Segment A pin: 2
-* Segment B pin: 8
-* Segment C pin: 10
-* Segment D pin: 11
-* Segment E pin: 12
-* Segment F pin: 7
-* Segment G pin: 13
-* Segment DecimalPoint pin: 4
+* DHT22 sensor: A7 for Arduino Pro Mini Atmega328 (A4 for Arduino Uno)
+* Mercury switch*: A6 for Arduino Pro Mini Atmega328 (A5 for Arduino Uno)
+* Digit 1 pin (PWM): 11
+* Digit 2 pin (PWM): A0
+* Digit 3 pin (PWM): A1
+* Digit 4 pin (PWM): 3
+* Segment A pin: 12
+* Segment B pin: A2
+* Segment C pin: 5
+* Segment D pin: 7
+* Segment E pin: 8
+* Segment F pin: 13
+* Segment G pin: 4
+* Segment DecimalPoint pin: 6
 
 (*) Mercury switch is connected to the input pin (INPUT_PULLUP mode) and one of GND pins. In case the switch is connected the display is off by default. It is turned on after shaking the switch for a second. And it is off again after LED_TURNED_ON_DURATION milliseconds.
 
