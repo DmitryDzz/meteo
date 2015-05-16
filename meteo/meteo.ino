@@ -11,22 +11,22 @@ const boolean COMMON_ANODE_LED = false; // true for LED with common anode, false
 const byte BRIGHTNESS = 255; // 0 - min, 255 - max
 const long DIGIT_DELAY_IN_MICROSECONDS = 500;
 
-const int DHT22_PIN = A0;
-const int MERCURY_SWITCH_PIN = A1;
+const int DHT22_PIN = A4; // SET A7 ON ARDUINO PRO MINI
+const int MERCURY_SWITCH_PIN = A5; // SET A6 ON ARDUINO PRO MINI
 
-const int DIGIT_1_PIN = 3;
-const int DIGIT_2_PIN = 5;
-const int DIGIT_3_PIN = 6;
-const int DIGIT_4_PIN = 9;
+const int DIGIT_1_PIN = 11;    // LED pin 12
+const int DIGIT_2_PIN = A0;    // LED pin 9
+const int DIGIT_3_PIN = A1;   // LED pin 8
+const int DIGIT_4_PIN = 3;    // LED pin 6
 
-const int SEGMENT_A_PIN = 2;
-const int SEGMENT_B_PIN = 8;
-const int SEGMENT_C_PIN = 10;
-const int SEGMENT_D_PIN = 11;
-const int SEGMENT_E_PIN = 12;
-const int SEGMENT_F_PIN = 7;
-const int SEGMENT_G_PIN = 13;
-const int SEGMENT_DP_PIN = 4;
+const int SEGMENT_A_PIN = 12;  // LED pin 11
+const int SEGMENT_B_PIN = A2; // LED pin 7
+const int SEGMENT_C_PIN = 5;  // LED pin 4
+const int SEGMENT_D_PIN = 7;  // LED pin 2
+const int SEGMENT_E_PIN = 8;  // LED pin 1
+const int SEGMENT_F_PIN = 13; // LED pin 10
+const int SEGMENT_G_PIN = 4;  // LED pin 5
+const int SEGMENT_DP_PIN = 6; // LED pin 3
 
 byte DIGIT_OFF;
 byte DIGIT_ON;
@@ -253,6 +253,21 @@ void drawDigit(short value, boolean hasDecimalPoint) {
   digitalWrite(SEGMENT_DP_PIN, hasDecimalPoint ? SEGMENT_ON : SEGMENT_OFF);
 }
 
+void turnOffAllLedPins() {
+  analogWrite(DIGIT_1_PIN, LOW);
+  analogWrite(DIGIT_2_PIN, LOW);
+  analogWrite(DIGIT_3_PIN, LOW);
+  analogWrite(DIGIT_4_PIN, LOW);
+  digitalWrite(SEGMENT_A_PIN, LOW);
+  digitalWrite(SEGMENT_B_PIN, LOW);
+  digitalWrite(SEGMENT_C_PIN, LOW);
+  digitalWrite(SEGMENT_D_PIN, LOW);
+  digitalWrite(SEGMENT_E_PIN, LOW);
+  digitalWrite(SEGMENT_F_PIN, LOW);
+  digitalWrite(SEGMENT_G_PIN, LOW);
+  digitalWrite(SEGMENT_DP_PIN, LOW);
+}
+
 int readData() {
   const long now = millis();
   if (now - lastReadingMillis > READ_DELAY_IN_MILLIS) {
@@ -391,7 +406,7 @@ void setup() {
   pinMode(SEGMENT_F_PIN, OUTPUT);
   pinMode(SEGMENT_G_PIN, OUTPUT);
   pinMode(SEGMENT_DP_PIN, OUTPUT);
-  
+
   if (COMMON_ANODE_LED) {
     // LED display with common anode:
     DIGIT_OFF = 0;
@@ -406,18 +421,7 @@ void setup() {
     SEGMENT_ON = HIGH;
   }
   
-  analogWrite(DIGIT_1_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_2_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_3_PIN, DIGIT_OFF);
-  analogWrite(DIGIT_4_PIN, DIGIT_OFF);
-  digitalWrite(SEGMENT_A_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_B_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_C_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_D_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_E_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_F_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_G_PIN, SEGMENT_ON);
-  digitalWrite(SEGMENT_DP_PIN, SEGMENT_ON);
+  turnOffAllLedPins();
   
   if (AUTO_START) {
     previousMercurySwitchIsOn = false;
@@ -436,10 +440,13 @@ void loop() {
       startModeMillis = millis();
       lastReadingMillis = startModeMillis;
       mode = TEMPERATURE;
+    } else {
+      // Just turned off:
+      turnOffAllLedPins();
     }
   }
   previousMercurySwitchIsOn = mercurySwitchIsOn;
-  
+
   // Read data from sensor
   errorCode = readData();
   if (errorCode < 0) {
@@ -458,17 +465,19 @@ void loop() {
     if (mode == TEMPERATURE) setTemperature();
     else setHumidity();
   }
-  
+ 
   // Draw one current digit on display
-  activateDigit(INACTIVE);
-  drawDigit(digits[currentDigitIndex], decimalPoints[currentDigitIndex]);
   if (mercurySwitchIsOn) {
-    activateDigit(currentDigitIndex);
-  }
+    activateDigit(INACTIVE);
+    drawDigit(digits[currentDigitIndex], decimalPoints[currentDigitIndex]);
+    if (mercurySwitchIsOn) {
+      activateDigit(currentDigitIndex);
+    }
   
-  // Change current digit
-  currentDigitIndex++;
-  if (currentDigitIndex >= 4) currentDigitIndex = 0;
+    // Change current digit
+    currentDigitIndex++;
+    if (currentDigitIndex >= 4) currentDigitIndex = 0;
+  }
   
   delayMicroseconds(DIGIT_DELAY_IN_MICROSECONDS);
 }
